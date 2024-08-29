@@ -1,9 +1,11 @@
+
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import Window from './components/Window';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
 import styles from './App.module.css';
+import { Home } from './components/Home';
 
 const App = () => {
   const [windows, setWindows] = useState({
@@ -91,10 +93,10 @@ const App = () => {
     });
   };
 
-  const updatePosition = (windowKey, x, y) => {
+  const updatePositionAndSize = (windowKey, x, y, width, height) => {
     setWindows(prev => ({
       ...prev,
-      [windowKey]: { ...prev[windowKey], x, y },
+      [windowKey]: { ...prev[windowKey], x, y, width, height },
     }));
   };
 
@@ -109,24 +111,86 @@ const App = () => {
         onPlayPause={handlePlayPause}
       />
       <Sidebar onTextClick={handleTextClick} />
-      {Object.keys(windows).map(key => (
-        windows[key].open && (
-          <Window
-            key={key}
-            title={key.charAt(0).toUpperCase() + key.slice(1)}
-            width={windows[key].width}
-            height={windows[key].height}
-            x={windows[key].x}
-            y={windows[key].y}
-            zIndex={windows[key].zIndex}
-            closeWindow={() => closeWindow(key)}
-            bringToFront={() => bringToFront(key)}
-            updatePosition={(x, y) => updatePosition(key, x, y)}
-          >
-            <p>{`${key.charAt(0).toUpperCase() + key.slice(1)} content goes here.`}</p>
-          </Window>
-        )
-      ))}
+
+      {windows.home.open && (
+        <Window
+          title="Home"
+          width={windows.home.width}
+          height={windows.home.height}
+          x={windows.home.x}
+          y={windows.home.y}
+          zIndex={windows.home.zIndex}
+          closeWindow={() => closeWindow('home')}
+          bringToFront={() => bringToFront('home')}
+          updatePositionAndSize={(x, y, width, height) => updatePositionAndSize('home', x, y, width, height)}
+        >
+          <Home />
+        </Window>
+      )}
+
+      {windows.media.open && (
+        <Window
+          title="Media"
+          width={windows.media.width}
+          height={windows.media.height}
+          x={windows.media.x}
+          y={windows.media.y}
+          zIndex={windows.media.zIndex}
+          closeWindow={() => closeWindow('media')}
+          bringToFront={() => bringToFront('media')}
+          updatePositionAndSize={(x, y) => updatePositionAndSize('media', x, y)}
+        >
+          <p>Media content goes here.</p>
+        </Window>
+      )}
+
+      {windows.about.open && (
+        <Window
+          title="About"
+          width={windows.about.width}
+          height={windows.about.height}
+          x={windows.about.x}
+          y={windows.about.y}
+          zIndex={windows.about.zIndex}
+          closeWindow={() => closeWindow('about')}
+          bringToFront={() => bringToFront('about')}
+          updatePositionAndSize={(x, y) => updatePositionAndSize('about', x, y)}
+        >
+          <p>About content goes here.</p>
+        </Window>
+      )}
+
+      {windows.visualizer.open && (
+        <Window
+          title="Visualizer"
+          width={windows.visualizer.width}
+          height={windows.visualizer.height}
+          x={windows.visualizer.x}
+          y={windows.visualizer.y}
+          zIndex={windows.visualizer.zIndex}
+          closeWindow={() => closeWindow('visualizer')}
+          bringToFront={() => bringToFront('visualizer')}
+          updatePositionAndSize={(x, y) => updatePositionAndSize('visualizer', x, y)}
+        >
+          <p>Visualizer content goes here.</p>
+        </Window>
+      )}
+
+      {windows.settings.open && (
+        <Window
+          title="Settings"
+          width={windows.settings.width}
+          height={windows.settings.height}
+          x={windows.settings.x}
+          y={windows.settings.y}
+          zIndex={windows.settings.zIndex}
+          closeWindow={() => closeWindow('settings')}
+          bringToFront={() => bringToFront('settings')}
+          updatePositionAndSize={(x, y) => updatePositionAndSize('settings', x, y)}
+        >
+          <p>Settings content goes here.</p>
+        </Window>
+      )}
     </div>
   );
 };
