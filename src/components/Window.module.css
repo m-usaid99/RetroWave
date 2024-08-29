@@ -1,0 +1,38 @@
+.window {
+  width: 100%;
+  /* Adjusted to allow resizing */
+  height: 100%;
+  border: 2px solid #000;
+  background-color: #B0B0C0;
+  box-shadow: 5px 5px black;
+  position: relative;
+  /* Relative to ResizableBox */
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.titleBar {
+  background-color: #000080;
+  color: white;
+  padding: 5px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  cursor: move;
+  /* Indicating draggable area */
+}
+
+.closeButton {
+  background-color: #FF4500;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.content {
+  padding: 10px;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+  overflow: auto;
+  /* Allow scrolling if content overflows */
+}

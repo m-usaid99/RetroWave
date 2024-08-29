@@ -1,0 +1,8 @@
+.app {
+  position: relative;
+  background-color: #358585;
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  padding: 0;
+}

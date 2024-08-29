@@ -1,0 +1,168 @@
+.topBar {
+  position: fixed;
+  top: 0;
+  left: 100px;
+  width: calc(100% - 100px);
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #B0B0C0;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  border-bottom: 2px solid black;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.playPauseBlock {
+  width: 100px;
+  height: 100px;
+  background-color: #b0b0c0;
+  border: 2px solid #404050;
+  border-right: 2px solid #5a5a6a;
+  border-bottom: 2px solid #5a5a6a;
+  border-left: 2px solid #dcdcdc;
+  border-top: 2px solid #dcdcdc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.playPauseBlock:active {
+  border-left: 2px solid #404050;
+  border-top: 2px solid #404050;
+  border-right: 2px solid #dcdcdc;
+  border-bottom: 2px solid #dcdcdc;
+  background-color: #a0a0b0;
+}
+
+.playPauseIcon {
+  font-size: 40px;
+}
+
+.songInfoBlock {
+  flex-grow: 1;
+  height: 100%;
+  background-color: #555574;
+  border: 2px solid black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.albumArt {
+  width: 100px;
+  height: 100px;
+  border: 1px solid black;
+  box-shadow: inset 1px 1px 0px #2C2C2C, inset -1px -1px 0px #A0A0A0;
+  margin-left: 0;
+  margin-right: 15px;
+}
+
+.songDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: 'VT323';
+  letter-spacing: 1px;
+}
+
+.songDetailsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.songName {
+  font-size: 32px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artistAlbum {
+  font-size: 18px;
+  margin-top: 5px;
+  color: #ccc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.progressBarContainer {
+  display: flex;
+  align-items: center;
+  background-color: #404050;
+  border: 2px solid black;
+  padding: 2px;
+  width: 500px;
+  height: 24px;
+  box-shadow: inset 1px 1px 0px #2C2C2C, inset -1px -1px 0px #A0A0A0;
+  position: relative;
+}
+
+.progressBar {
+  background-color: #b0b0c0;
+  height: 100%;
+  width: 50%;
+  box-shadow: inset 1px 1px 0px #808080;
+}
+
+.timeLabel {
+  display: flex;
+  flex-direction: flex-start;
+  margin-right: 40px;
+}
+
+.startTime {
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+.endTime {
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.githubButton {
+  width: 100px;
+  height: 100px;
+  background-color: #b0b0c0;
+  border: 2px solid #404050;
+  border-right: 2px solid #5a5a6a;
+  border-bottom: 2px solid #5a5a6a;
+  border-left: 2px solid #dcdcdc;
+  border-top: 2px solid #dcdcdc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.githubButton:active {
+  border-left: 2px solid #404050;
+  border-top: 2px solid #404050;
+  border-right: 2px solid #dcdcdc;
+  border-bottom: 2px solid #dcdcdc;
+  background-color: #a0a0b0;
+}
+
+.githubIcon {
+  width: 50px;
+  height: 50px;
+  filter: brightness(0) saturate(100%) invert(100%) sepia(1%) saturate(437%) hue-rotate(6deg) brightness(118%) contrast(100%);
+}
+
+.lastFMIcon {
+  filter: brightness(0) saturate(100%) invert(100%) sepia(1%) saturate(437%) hue-rotate(6deg) brightness(118%) contrast(100%);
+  width: 50px;
+  height: 50px;
+}
