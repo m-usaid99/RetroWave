@@ -25,14 +25,3 @@
   font-weight: bold;
   cursor: pointer;
 }
-
-.contentWrapper {
-  padding: 10px;
-  background-color: white;
-  margin: 15px;
-  height: 80%;
-  box-sizing: border-box;
-  color: black;
-  overflow-y: auto;
-  overflow-x: hidden;
-}

@@ -24,9 +24,7 @@ function Window({ title, children, width, height, x, y, zIndex, closeWindow, bri
         <span>{title}</span>
         <button className={styles.closeButton} onClick={closeWindow}>X</button>
       </div>
-      <div className={styles.contentWrapper}>
-        {children} {/* Content goes here, inside the white box with grey border */}
-      </div>
+      {children} {/* Content goes here, inside the white box with grey border */}
     </Rnd>
   );
 }

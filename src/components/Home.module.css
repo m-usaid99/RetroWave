@@ -1,1 +1,16 @@
-
+.content {
+  padding: 10px;
+  background-color: white;
+  margin: 15px;
+  height: 80%;
+  box-sizing: border-box;
+  color: black;
+  font-size: 14px;
+  font-family: 'IBM Plex Mono';
+  font-weight: 600;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 2px solid #A0A0A0;
+  box-shadow: inset -3px -3px 5px #D3D3D3,
+    inset 3px 3px 5px #404040;
+}

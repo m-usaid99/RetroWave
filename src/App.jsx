@@ -1,11 +1,10 @@
-
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import Window from './components/Window';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
 import styles from './App.module.css';
 import { Home } from './components/Home';
+import MediaPlayer from './components/MediaPlayer';
 
 const App = () => {
   const [windows, setWindows] = useState({
@@ -16,9 +15,18 @@ const App = () => {
     settings: { open: false, x: 800, y: 100, width: 300, height: 200, zIndex: 0 },
   });
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState({
+    title: 'Bring The Sun',
+    artist: 'Swans',
+    album: 'To Be Kind',
+  });
 
   const handlePlayPause = () => {
-    setIsPlaying(prev => !prev);
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleMetadataLoaded = (metadata) => {
+    setCurrentTrack(metadata);
   };
 
   const adjustWindowPositions = () => {
@@ -103,11 +111,11 @@ const App = () => {
   return (
     <div className={styles.app}>
       <TopBar
-        songName="Bring The Sun"
-        artistName="Swans"
-        albumName="To Be Kind"
-        elapsedTime="00:42"
+        songName={currentTrack.title}
+        artistName={currentTrack.artist}
+        albumName={currentTrack.album}
         isPlaying={isPlaying}
+
         onPlayPause={handlePlayPause}
       />
       <Sidebar onTextClick={handleTextClick} />
@@ -140,7 +148,11 @@ const App = () => {
           bringToFront={() => bringToFront('media')}
           updatePositionAndSize={(x, y) => updatePositionAndSize('media', x, y)}
         >
-          <p>Media content goes here.</p>
+          <MediaPlayer
+            isPlaying={isPlaying}
+            onPlayPause={setIsPlaying}
+            onMetadataLoaded={handleMetadataLoaded}
+          />
         </Window>
       )}
 

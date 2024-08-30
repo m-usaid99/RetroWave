@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import styles from './TopBar.module.css';
 
 function TopBar({ songName, artistName, albumName, isPlaying, onPlayPause }) {
@@ -35,7 +34,7 @@ function TopBar({ songName, artistName, albumName, isPlaying, onPlayPause }) {
       <div className={styles.githubButton}>
         <img className={styles.githubIcon} src="https://unpkg.com/pixelarticons@1.8.1/svg/github.svg" alt="GitHub" />
       </div>
-    </div >
+    </div>
   );
 }
 

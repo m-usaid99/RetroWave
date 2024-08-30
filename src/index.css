@@ -7,3 +7,46 @@ html {
   overflow: hidden;
   /* To hide any overflow */
 }
+
+/* Scrollbar track */
+::-webkit-scrollbar {
+  width: 16px;
+  background-color: #404050;
+  /* Track color */
+}
+
+/* Scrollbar handle */
+::-webkit-scrollbar-thumb {
+  background-color: #B0B0C0;
+  /* Handle color */
+  border: 2px solid #808080;
+  /* Border for 3D effect */
+  box-shadow: inset -1px -1px 1px #FFFFFF, inset 1px 1px 1px #000000;
+  /* Classic Windows 95 shadow */
+}
+
+/* Scrollbar arrows */
+::-webkit-scrollbar-button {
+  background-color: #404050;
+  /* Arrow background color */
+  border: 1px solid #000000;
+  /* Border around arrow buttons */
+}
+
+::-webkit-scrollbar-button:single-button:decrement {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%23B0B0C0" viewBox="0 0 24 24"><polygon points="12,8 18,16 6,16"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+::-webkit-scrollbar-button:single-button:increment {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%23B0B0C0" viewBox="0 0 24 24"><polygon points="12,16 18,8 6,8"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Optional: Handle hover state */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #A0A0A0;
+  /* Darken on hover */
+}
