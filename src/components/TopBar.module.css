@@ -68,6 +68,7 @@
   flex-direction: column;
   justify-content: center;
   font-family: 'VT323';
+  margin-left: 20px;
   letter-spacing: 1px;
 }
 

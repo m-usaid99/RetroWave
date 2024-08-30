@@ -1,6 +1,6 @@
 import styles from './TopBar.module.css';
 
-function TopBar({ songName, artistName, albumName, isPlaying, onPlayPause }) {
+function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPause }) {
   return (
     <div className={styles.topBar}>
       <div className={styles.playPauseBlock} onClick={onPlayPause}>
@@ -10,7 +10,9 @@ function TopBar({ songName, artistName, albumName, isPlaying, onPlayPause }) {
       </div>
       <div className={styles.songInfoBlock}>
         <div className={styles.songDetailsContainer}>
-          <img className={styles.albumArt} src="https://upload.wikimedia.org/wikipedia/en/8/85/Swans_To_Be_Kind.jpg" alt="album art" />
+          {albumArt && (
+            <img className={styles.albumArt} src={albumArt} alt="album art" />
+          )}
           <div className={styles.songDetails}>
             <div className={styles.songName}>
               {songName}
@@ -34,7 +36,7 @@ function TopBar({ songName, artistName, albumName, isPlaying, onPlayPause }) {
       <div className={styles.githubButton}>
         <img className={styles.githubIcon} src="https://unpkg.com/pixelarticons@1.8.1/svg/github.svg" alt="GitHub" />
       </div>
-    </div>
+    </div >
   );
 }
 

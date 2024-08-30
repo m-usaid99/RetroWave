@@ -19,6 +19,7 @@ const App = () => {
     title: 'Bring The Sun',
     artist: 'Swans',
     album: 'To Be Kind',
+    albumArt: null,
   });
 
   const handlePlayPause = () => {
@@ -114,8 +115,8 @@ const App = () => {
         songName={currentTrack.title}
         artistName={currentTrack.artist}
         albumName={currentTrack.album}
+        albumArt={currentTrack.albumArt}
         isPlaying={isPlaying}
-
         onPlayPause={handlePlayPause}
       />
       <Sidebar onTextClick={handleTextClick} />

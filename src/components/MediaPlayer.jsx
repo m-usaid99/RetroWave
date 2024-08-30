@@ -13,13 +13,19 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded }) => {
       onPlayPause(false); // Pause playback when a new file is uploaded
 
       const metadata = await mm.parseBlob(file);
-      const { title, artist, album } = metadata.common;
+      const { title, artist, album, picture } = metadata.common;
 
-      // Pass metadata back to the parent component
+      let albumArt = null;
+      if (picture && picture.length > 0) {
+        const imageUrl = URL.createObjectURL(new Blob([picture[0].data]));
+        albumArt = imageUrl;
+      }
+
       onMetadataLoaded({
         title: title || file.name,
         artist: artist || 'Unknown Artist',
         album: album || 'Unknown Album',
+        albumArt, // Pass the album art URL
       });
     }
   };
