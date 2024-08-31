@@ -70,7 +70,6 @@
   font-family: 'VT323';
   margin-left: 20px;
   max-width: 400px;
-  overflow: hidden;
   letter-spacing: 1px;
   text-overflow: ellipsis;
 }
@@ -94,6 +93,7 @@
   font-size: 18px;
   margin-top: 5px;
   color: #ccc;
+  max-width: 400px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

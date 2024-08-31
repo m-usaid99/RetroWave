@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import styles from './TopBar.module.css';
 
 function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPause, currentTime, duration }) {
