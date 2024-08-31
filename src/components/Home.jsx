@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import styles from './Home.module.css';
 
 export const Home = () => {

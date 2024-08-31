@@ -9,16 +9,16 @@ import MediaPlayer from './components/MediaPlayer';
 const App = () => {
   const [windows, setWindows] = useState({
     home: { open: true, x: 150, y: 300, width: 400, height: 300, zIndex: 2 },
-    media: { open: true, x: 425, y: 200, width: 450, height: 300, zIndex: 1 },
+    media: { open: true, x: 425, y: 200, width: 600, height: 350, zIndex: 1 },
     about: { open: false, x: 950, y: 600, width: 350, height: 200, zIndex: 0 },
     visualizer: { open: true, x: 375, y: 125, width: 800, height: 600, zIndex: 0 },
     settings: { open: false, x: 800, y: 100, width: 300, height: 200, zIndex: 0 },
   });
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState({
-    title: 'Bring The Sun',
-    artist: 'Swans',
-    album: 'To Be Kind',
+    title: 'No Track Selected',
+    artist: '',
+    album: '',
     albumArt: null,
   });
 
@@ -147,7 +147,7 @@ const App = () => {
           zIndex={windows.media.zIndex}
           closeWindow={() => closeWindow('media')}
           bringToFront={() => bringToFront('media')}
-          updatePositionAndSize={(x, y) => updatePositionAndSize('media', x, y)}
+          updatePositionAndSize={(x, y, width, height) => updatePositionAndSize('media', x, y, width, height)}
         >
           <MediaPlayer
             isPlaying={isPlaying}
@@ -167,7 +167,7 @@ const App = () => {
           zIndex={windows.about.zIndex}
           closeWindow={() => closeWindow('about')}
           bringToFront={() => bringToFront('about')}
-          updatePositionAndSize={(x, y) => updatePositionAndSize('about', x, y)}
+          updatePositionAndSize={(x, y, height, width) => updatePositionAndSize('about', x, y, height, width)}
         >
           <p>About content goes here.</p>
         </Window>
@@ -183,7 +183,7 @@ const App = () => {
           zIndex={windows.visualizer.zIndex}
           closeWindow={() => closeWindow('visualizer')}
           bringToFront={() => bringToFront('visualizer')}
-          updatePositionAndSize={(x, y) => updatePositionAndSize('visualizer', x, y)}
+          updatePositionAndSize={(x, y, height, width) => updatePositionAndSize('visualizer', x, y, height, width)}
         >
           <p>Visualizer content goes here.</p>
         </Window>
