@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import * as mm from 'music-metadata';
 import styles from './MediaPlayer.module.css';
 
-const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded }) => {
+const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate }) => {
   const [selectedSource, setSelectedSource] = useState('local'); // Default to Local Files
   const [trackList, setTrackList] = useState([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(null);
@@ -39,7 +39,7 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded }) => {
           name: title || file.name,
           artist: artist || 'Unknown Artist',
           album: album || 'Unknown Album',
-          albumArt: albumArt || 'defaultAlbumArt.png', // Use a default image if no album art
+          albumArt: albumArt || null, // Use a default image if no album art
           url: url,
         });
       } catch (error) {
@@ -48,7 +48,7 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded }) => {
           name: file.name,
           artist: 'Unknown Artist',
           album: 'Unknown Album',
-          albumArt: 'defaultAlbumArt.png',
+          albumArt: null,
           url: url,
         });
       }
@@ -106,6 +106,25 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded }) => {
       }
     }
   }, [currentTrackIndex, trackList, isPlaying]);
+
+  // Time update logic
+  useEffect(() => {
+    if (audioRef.current) {
+      const updateTime = () => {
+        onTimeUpdate(audioRef.current.currentTime, audioRef.current.duration);
+      };
+      audioRef.current.addEventListener('timeupdate', updateTime);
+      audioRef.current.addEventListener('loadedmetadata', updateTime);
+
+      return () => {
+        if (audioRef.current) {
+          audioRef.current.removeEventListener('timeupdate', updateTime);
+          audioRef.current.removeEventListener('loadedmetadata', updateTime);
+        }
+      };
+    }
+  }, [onTimeUpdate]);
+
 
   return (
     <div className={styles.mediaPlayer}>
