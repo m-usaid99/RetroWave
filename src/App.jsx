@@ -119,10 +119,10 @@ const App = () => {
   return (
     <div className={styles.app}>
       <TopBar
-        songName={currentTrack.title}
-        artistName={currentTrack.artist}
-        albumName={currentTrack.album}
-        albumArt={currentTrack.albumArt}
+        songName={currentTrack?.title || 'No Track Selected'}
+        artistName={currentTrack?.artist || 'Unknown Artist'}
+        albumName={currentTrack?.album || 'Unknown Album'}
+        albumArt={currentTrack?.albumArt || null}
         isPlaying={isPlaying}
         onPlayPause={handlePlayPause}
         currentTime={currentTime}
