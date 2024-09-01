@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import styles from './TopBar.module.css';
 
 function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPause, currentTime, duration }) {
@@ -12,6 +12,23 @@ function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPa
   };
 
   const progressPercentage = (currentTime / duration) * 100;
+
+  useEffect(() => {
+    const applyMarquee = (element) => {
+      if (element.scrollWidth > element.clientWidth) {
+        element.classList.add(styles.marqueeAnimation);
+      } else {
+        element.classList.remove(styles.marqueeAnimation);
+      }
+    };
+
+    applyMarquee(songNameRef.current);
+    applyMarquee(artistAlbumRef.current);
+  }, [songName, artistName, albumName]);
+
+
+
+
   return (
     <div className={styles.topBar}>
       <div className={styles.playPauseBlock} onClick={onPlayPause}>
@@ -26,11 +43,15 @@ function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPa
             <img className={styles.albumArt} src={albumArt} alt="album art" />
           )}
           <div className={styles.songDetails}>
-            <div className={styles.songName} ref={songNameRef}>
-              {songName}
+            <div ref={songNameRef} className={styles.marquee}>
+              <div className={styles.songName} >
+                {songName}
+              </div>
             </div>
-            <div className={styles.artistAlbum} ref={artistAlbumRef}>
-              {albumName} - {artistName}
+            <div ref={artistAlbumRef} className={styles.marquee}>
+              <div className={styles.artistAlbum} >
+                {albumName} - {artistName}
+              </div>
             </div>
           </div>
         </div>
