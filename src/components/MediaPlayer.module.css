@@ -86,14 +86,66 @@
   width: 100%;
 }
 
-.spotifyPlaceholder {
-  margin-bottom: 15px;
+.spotifySection {
   padding: 10px;
-  background-color: #3a3a3a;
-  color: #ccc;
-  border: 1px solid #555;
-  border-radius: 3px;
+  color: white;
   text-align: center;
+  font-family: 'IBM Plex Mono', Courier, monospace;
+}
+
+.spotifySection button {
+  padding: 5px 10px;
+  background-color: #555574;
+  color: white;
+  border: 2px solid #000;
+  font-family: 'IBM Plex Mono', Courier, monospace;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.searchResults {
+  background-color: white;
+  padding: 10px;
+  width: 90%;
+  max-height: 50%;
+  border: 2px solid #A0A0A0;
+  box-shadow: inset -3px -3px 5px #D3D3D3,
+    inset 3px 3px 5px #404040;
+  margin: 0 auto 15px auto;
+  overflow-y: auto;
+}
+
+.searchResults ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.searchResults li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.searchResults li:last-child {
+  border-bottom: none;
+}
+
+.searchResults li:hover {
+  background-color: #f9f9f9;
+}
+
+.searchResults .activeTrack {
+  background-color: #d9edf7;
+}
+
+.searchResults span {
+  flex-grow: 1;
+  margin-right: 10px;
 }
 
 .trackList {

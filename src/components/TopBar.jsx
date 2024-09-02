@@ -27,8 +27,6 @@ function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPa
   }, [songName, artistName, albumName]);
 
 
-
-
   return (
     <div className={styles.topBar}>
       <div className={styles.playPauseBlock} onClick={onPlayPause}>

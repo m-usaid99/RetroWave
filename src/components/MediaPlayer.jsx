@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as mm from 'music-metadata';
+import { getSpotifyAuthorizationUrl, handleSpotifyCallback, searchSpotify } from '../utils/spotifyUtils';
 import styles from './MediaPlayer.module.css';
 
 const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate }) => {
@@ -7,6 +8,9 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate })
   const [trackList, setTrackList] = useState([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('No file chosen');
+  const [spotifyToken, setSpotifyToken] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const audioRef = useRef(null);
 
   const handleSourceChange = (event) => {
@@ -14,6 +18,31 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate })
     setTrackList([]); // Clear track list when source changes
     setCurrentTrackIndex(null);
     onMetadataLoaded(null); // Clear metadata display
+  };
+
+  const handleSpotifyLogin = () => {
+    window.location.href = getSpotifyAuthorizationUrl(); // Redirect to Spotify's authorization page
+  };
+
+  useEffect(() => {
+    if (selectedSource === 'spotify') {
+      const fetchSpotifyToken = async () => {
+        const token = await handleSpotifyCallback(); // Handle the callback and get the token
+        if (token) {
+          setSpotifyToken(token);
+        }
+      };
+      fetchSpotifyToken();
+    }
+  }, [selectedSource]);
+
+  const handleSearch = async () => {
+    if (spotifyToken && searchQuery) {
+      const results = await searchSpotify(searchQuery, 'track', spotifyToken);
+      if (results && results.tracks) {
+        setSearchResults(results.tracks.items);
+      }
+    }
   };
 
 
@@ -147,8 +176,34 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate })
       )}
 
       {selectedSource === 'spotify' && (
-        <div className={styles.spotifyPlaceholder}>
-          <p>Spotify integration coming soon!</p>
+        <div className={styles.spotifySection}>
+          {!spotifyToken ? (
+            <button onClick={handleSpotifyLogin}>Login to Spotify</button>
+          ) : (
+            <p>Spotify token acquired. Ready to play music!</p>
+          )}
+        </div>
+      )}
+
+      {selectedSource === 'spotify' && spotifyToken && (
+        <div className={styles.searchSection}>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search Spotify"
+          />
+          <button onClick={handleSearch}>Search</button>
+
+          {searchResults.length > 0 && (
+            <ul className={styles.searchResults}>
+              {searchResults.map((track) => (
+                <li key={track.id}>
+                  {track.name} - {track.artists.map(artist => artist.name).join(', ')}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 
