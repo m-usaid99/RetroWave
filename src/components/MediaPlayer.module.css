@@ -105,7 +105,16 @@
 }
 
 .searchSection {
-  height: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 60%;
+}
+
+.searchInputWrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
 .searchSection input[type="text"] {

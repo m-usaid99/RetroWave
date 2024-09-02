@@ -229,13 +229,18 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
 
       {selectedSource === 'spotify' && spotifyToken && (
         <div className={styles.searchSection}>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search Spotify"
-          />
-          <button onClick={handleSearch}>Search</button>
+          <div className={styles.searchInputWrapper}>
+            <label className={styles.customSearchLabel}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search Spotify"
+                className={styles.searchInput}
+              />
+            </label>
+            <button onClick={handleSearch} className={styles.searchButton}>Search</button>
+          </div>
 
           {searchResults.length > 0 && (
             <ul className={styles.searchResults}>
