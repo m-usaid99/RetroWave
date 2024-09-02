@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as mm from 'music-metadata';
 import { getSpotifyAuthorizationUrl, handleSpotifyCallback, searchSpotify } from '../utils/spotifyUtils';
-import { loadSpotifyPlayer, playSpotifyTrack, toggleSpotifyPlayPause } from '../utils/spotifyPlayerUtils';
+import { loadSpotifyPlayer, playSpotifyTrack, updateSpotifyElapsedTime } from '../utils/spotifyPlayerUtils';
 import styles from './MediaPlayer.module.css';
 
 const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, setSpotifyPlayer }) => {
@@ -32,15 +32,16 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
         if (token) {
           setSpotifyToken(token);
 
-          // Load Spotify player once the token is available
           loadSpotifyPlayer(
             token,
             (state) => {
+              console.log('Player state changed:', state);
               onTimeUpdate(state.position / 1000, state.duration / 1000);
-              onPlayPause(!state.paused); // Update playback state in App component
+              onPlayPause(!state.paused);
             },
             (playerInstance) => {
-              setSpotifyPlayer(playerInstance); // Pass the player instance up to the App component
+              setSpotifyPlayer(playerInstance);
+              updateSpotifyElapsedTime(onTimeUpdate);
             }
           );
         }
@@ -48,7 +49,6 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
       fetchSpotifyToken();
     }
   }, [selectedSource]);
-
 
   const handleSearch = async () => {
     if (spotifyToken && searchQuery) {
@@ -79,6 +79,16 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
     onPlayPause(true); // Start playback
   };
 
+  // useEffect(() => {
+  //   if (selectedSource === 'spotify' && isPlaying) {
+  //     const interval = setInterval(async () => {
+  //       const { position, duration } = await getCurrentSpotifyTime();
+  //       onTimeUpdate(position, duration);
+  //     }, 1000);
+  //
+  //     return () => clearInterval(interval); // Cleanup on unmount or stop playing
+  //   }
+  // }, [isPlaying, selectedSource]);
 
 
   const handleFileUpload = async (event) => {

@@ -52,6 +52,7 @@ export const loadSpotifyPlayer = (token, onPlayerStateChange, onReady) => {
 };
 
 export const playSpotifyTrack = async (trackUri, token) => {
+  console.log(trackUri, token);
   const response = await fetch(`https://api.spotify.com/v1/me/player/play`, {
     method: 'PUT',
     headers: {
@@ -75,3 +76,15 @@ export const toggleSpotifyPlayPause = () => {
   return Promise.reject('Spotify player is not initialized');
 };
 
+// Function to update the elapsed time
+export const updateSpotifyElapsedTime = (onTimeUpdate) => {
+  if (spotifyPlayer) {
+    spotifyPlayer.addListener('player_state_changed', state => {
+      if (state) {
+        const currentTime = state.position / 1000;
+        const duration = state.duration / 1000;
+        onTimeUpdate(currentTime, duration);
+      }
+    });
+  }
+};
