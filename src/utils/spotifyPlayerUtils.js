@@ -2,7 +2,7 @@ let spotifyPlayer = null;
 let pollingInterval = null;
 let positionInterval = null;
 
-export const loadSpotifyPlayer = (token, onPlayerStateChange, onReady) => {
+export const loadSpotifyPlayer = (token, onPlayerStateChange, onReady, onTimeUpdate) => {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = 'https://sdk.scdn.co/spotify-player.js';
@@ -20,7 +20,7 @@ export const loadSpotifyPlayer = (token, onPlayerStateChange, onReady) => {
         if (state) {
           onPlayerStateChange(state);
           if (!state.paused) {
-            startPositionInterval(state.duration / 1000, onPlayerStateChange);
+            startPositionInterval(state.duration / 1000, onPlayerStateChange, onTimeUpdate);
           } else {
             clearPositionInterval();
           }
@@ -45,20 +45,6 @@ export const loadSpotifyPlayer = (token, onPlayerStateChange, onReady) => {
     };
   });
 };
-
-// Function to update the elapsed time
-export const updateSpotifyElapsedTime = (onTimeUpdate) => {
-  if (spotifyPlayer) {
-    spotifyPlayer.addListener('player_state_changed', state => {
-      if (state) {
-        const currentTime = state.position / 1000;
-        const duration = state.duration / 1000;
-        onTimeUpdate(currentTime, duration);
-      }
-    });
-  }
-};
-
 
 // Attempt to force the device to be active without auto-playing music
 export const forceActivateDevice = async (device_id, token) => {

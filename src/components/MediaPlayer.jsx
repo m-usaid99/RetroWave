@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as mm from 'music-metadata';
 import { getSpotifyAuthorizationUrl, handleSpotifyCallback, searchSpotify } from '../utils/spotifyUtils';
-import { loadSpotifyPlayer, playSpotifyTrack, updateSpotifyElapsedTime, startPollingForDevice, stopPollingForDevice } from '../utils/spotifyPlayerUtils';
+import { loadSpotifyPlayer, playSpotifyTrack, startPollingForDevice, stopPollingForDevice } from '../utils/spotifyPlayerUtils';
 import styles from './MediaPlayer.module.css';
 
 const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, setSpotifyPlayer }) => {
@@ -25,7 +25,6 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
     window.location.href = getSpotifyAuthorizationUrl(); // Redirect to Spotify's authorization page
   };
 
-  // Inside useEffect, make sure to load the Spotify player:
   useEffect(() => {
     if (selectedSource === 'spotify') {
       const fetchSpotifyToken = async () => {
@@ -36,14 +35,16 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
           loadSpotifyPlayer(
             token,
             (state) => {
-              console.log('Player state changed:', state);
+              // Update progress bar and time text
               onTimeUpdate(state.position / 1000, state.duration / 1000);
               onPlayPause(!state.paused);
             },
             (playerInstance) => {
               setSpotifyPlayer(playerInstance);
-            }
+            },
+            onTimeUpdate
           );
+
           startPollingForDevice('RetroWave', token, (device) => {
             console.log('RetroWave device is active:', device);
           });
@@ -53,9 +54,10 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
     }
 
     return () => {
-      stopPollingForDevice();
+      stopPollingForDevice(); // Clean up polling when the component is unmounted
     };
   }, [selectedSource]);
+
 
   const handleSearch = async () => {
     if (spotifyToken && searchQuery) {
