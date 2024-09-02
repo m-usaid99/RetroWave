@@ -35,6 +35,13 @@ const App = () => {
 
   const handleMetadataLoaded = (metadata) => {
     setCurrentTrack(metadata);
+
+    // Check if duration exists and is not null or undefined before setting it
+    if (metadata && metadata.duration) {
+      setDuration(metadata.duration);
+    } else {
+      setDuration(0); // Set to 0 or some default value if duration is not available
+    }
   };
 
   const adjustWindowPositions = () => {

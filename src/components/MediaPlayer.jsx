@@ -45,6 +45,22 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate })
     }
   };
 
+  const handleSpotifyTrackSelect = (track) => {
+    const durationInSeconds = track.duration_ms / 1000; // Convert duration to seconds
+
+    // Passing the selected track metadata to the App component
+    onMetadataLoaded({
+      title: track.name,
+      artist: track.artists.map(artist => artist.name).join(', '),
+      album: track.album.name,
+      albumArt: track.album.images[0]?.url || null,
+      duration: durationInSeconds, // Add the duration in seconds
+    });
+
+    setCurrentTrackIndex(null); // Reset current track index
+    onPlayPause(false); // Pause current playback
+  };
+
 
   const handleFileUpload = async (event) => {
     const files = Array.from(event.target.files);
@@ -198,7 +214,7 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate })
           {searchResults.length > 0 && (
             <ul className={styles.searchResults}>
               {searchResults.map((track) => (
-                <li key={track.id}>
+                <li key={track.id} onClick={() => handleSpotifyTrackSelect(track)}>
                   {track.name} - {track.artists.map(artist => artist.name).join(', ')}
                 </li>
               ))}
