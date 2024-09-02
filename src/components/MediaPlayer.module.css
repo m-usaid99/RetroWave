@@ -108,6 +108,48 @@
   height: 60%;
 }
 
+.searchSection input[type="text"] {
+  flex-grow: 1;
+  padding: 8px;
+  background-color: #404050;
+  color: white;
+  border: 2px solid #000;
+  font-family: 'IBM Plex Mono', Courier, monospace;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 0;
+}
+
+.searchSection input[type="text"]::placeholder {
+  color: #808080;
+}
+
+.searchSection input[type="text"]:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px #808080;
+}
+
+.searchSection button {
+  padding: 8px 16px;
+  background-color: #FF4500;
+  color: white;
+  border: 2px solid #000;
+  font-family: 'IBM Plex Mono', Courier, monospace;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.searchSection button:hover {
+  background-color: #e03e00;
+}
+
+.searchSection button:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px #808080;
+}
+
 .searchResults {
   background-color: white;
   padding: 10px;

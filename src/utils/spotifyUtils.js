@@ -1,5 +1,3 @@
-// utils/spotifyUtils.js
-
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
 const SCOPES = import.meta.env.VITE_SPOTIFY_SCOPES.split(' ');
@@ -19,38 +17,24 @@ export const getSpotifyAuthorizationUrl = () => {
   const state = generateRandomString(16);
   const scope = SCOPES.join(' ');
 
-  const url = `${AUTHORIZATION_ENDPOINT}?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&state=${state}`;
+  const url = `${AUTHORIZATION_ENDPOINT}?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&state=${state}`;
 
   return url;
 };
 
-export const handleSpotifyCallback = async () => {
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get('code');
+export const handleSpotifyCallback = () => {
+  // Check if the URL contains the fragment identifier
+  const hash = window.location.hash.substring(1); // Remove the `#`
+  const params = new URLSearchParams(hash);
+  const accessToken = params.get('access_token');
 
-  if (code) {
-    // Exchange code for access token
-    const response = await fetch('https://accounts.spotify.com/api/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + btoa(CLIENT_ID + ':' + import.meta.env.VITE_SPOTIFY_CLIENT_SECRET),
-      },
-      body: new URLSearchParams({
-        grant_type: 'authorization_code',
-        code: code,
-        redirect_uri: REDIRECT_URI,
-      }),
-    });
-
-    const data = await response.json();
+  if (accessToken) {
     window.history.pushState({}, document.title, "/"); // Clean up the URL
-    return data.access_token;
+    return accessToken;
   }
 
   return null;
 };
-
 
 export const searchSpotify = async (query, type, token) => {
   const endpoint = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=${type}&limit=10`;
@@ -75,3 +59,4 @@ export const searchSpotify = async (query, type, token) => {
     return null;
   }
 };
+
