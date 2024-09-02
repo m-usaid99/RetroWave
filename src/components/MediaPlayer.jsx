@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as mm from 'music-metadata';
 import { getSpotifyAuthorizationUrl, handleSpotifyCallback, searchSpotify } from '../utils/spotifyUtils';
+import { loadSpotifyPlayer, playSpotifyTrack, toggleSpotifyPlayPause } from '../utils/spotifyPlayerUtils';
 import styles from './MediaPlayer.module.css';
 
-const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate }) => {
+const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, setSpotifyPlayer }) => {
   const [selectedSource, setSelectedSource] = useState('local'); // Default to Local Files
   const [trackList, setTrackList] = useState([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(null);
@@ -30,11 +31,24 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate })
         const token = await handleSpotifyCallback(); // Handle the callback and get the token
         if (token) {
           setSpotifyToken(token);
+
+          // Load Spotify player once the token is available
+          loadSpotifyPlayer(
+            token,
+            (state) => {
+              onTimeUpdate(state.position / 1000, state.duration / 1000);
+              onPlayPause(!state.paused); // Update playback state in App component
+            },
+            (playerInstance) => {
+              setSpotifyPlayer(playerInstance); // Pass the player instance up to the App component
+            }
+          );
         }
       };
       fetchSpotifyToken();
     }
   }, [selectedSource]);
+
 
   const handleSearch = async () => {
     if (spotifyToken && searchQuery) {
@@ -46,20 +60,25 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate })
   };
 
   const handleSpotifyTrackSelect = (track) => {
-    const durationInSeconds = track.duration_ms / 1000; // Convert duration to seconds
+    // Convert duration from milliseconds to seconds
+    const durationInSeconds = track.duration_ms / 1000;
 
-    // Passing the selected track metadata to the App component
+    // Passing the selected track metadata to the parent component (App.jsx)
     onMetadataLoaded({
       title: track.name,
       artist: track.artists.map(artist => artist.name).join(', '),
       album: track.album.name,
       albumArt: track.album.images[0]?.url || null,
+      url: `https://open.spotify.com/track/${track.id}`, // Spotify track URL for reference
       duration: durationInSeconds, // Add the duration in seconds
     });
+    playSpotifyTrack(`spotify:track:${track.id}`, spotifyToken);
 
+    setSearchResults([]); // Clear search results after selection
     setCurrentTrackIndex(null); // Reset current track index
-    onPlayPause(false); // Pause current playback
+    onPlayPause(true); // Start playback
   };
+
 
 
   const handleFileUpload = async (event) => {
@@ -169,7 +188,6 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate })
       };
     }
   }, [onTimeUpdate]);
-
 
   return (
     <div className={styles.mediaPlayer}>

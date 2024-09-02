@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
 import styles from './App.module.css';
 import { Home } from './components/Home';
+import { toggleSpotifyPlayPause } from './utils/spotifyPlayerUtils';
 import MediaPlayer from './components/MediaPlayer';
 
 const App = () => {
@@ -23,9 +24,18 @@ const App = () => {
   });
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [spotifyPlayer, setSpotifyPlayer] = useState(null);
 
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
+    if (spotifyPlayer) {
+      toggleSpotifyPlayPause().then(() => {
+        setIsPlaying(!isPlaying);
+      }).catch(err => {
+        console.error('Failed to toggle Spotify playback:', err);
+      });
+    } else {
+      setIsPlaying(!isPlaying);
+    }
   };
 
   const handleTimeUpdate = (current, total) => {
@@ -170,6 +180,7 @@ const App = () => {
             onPlayPause={setIsPlaying}
             onMetadataLoaded={handleMetadataLoaded}
             onTimeUpdate={handleTimeUpdate}
+            setSpotifyPlayer={setSpotifyPlayer}
           />
         </Window>
       )}

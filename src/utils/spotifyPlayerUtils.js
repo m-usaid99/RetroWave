@@ -1,4 +1,5 @@
-let player = null;
+// utils/spotifyPlayerUtils.js
+let spotifyPlayer = null;
 
 export const loadSpotifyPlayer = (token, onPlayerStateChange, onReady) => {
   return new Promise((resolve, reject) => {
@@ -8,40 +9,40 @@ export const loadSpotifyPlayer = (token, onPlayerStateChange, onReady) => {
     document.body.appendChild(script);
 
     window.onSpotifyWebPlaybackSDKReady = () => {
-      player = new window.Spotify.Player({
+      spotifyPlayer = new window.Spotify.Player({
         name: 'RetroWave',
         getOAuthToken: cb => { cb(token); },
         volume: 0.5
       });
 
       // Error handling
-      player.addListener('initialization_error', ({ message }) => { console.error(message); });
-      player.addListener('authentication_error', ({ message }) => { console.error(message); });
-      player.addListener('account_error', ({ message }) => { console.error(message); });
-      player.addListener('playback_error', ({ message }) => { console.error(message); });
+      spotifyPlayer.addListener('initialization_error', ({ message }) => { console.error(message); });
+      spotifyPlayer.addListener('authentication_error', ({ message }) => { console.error(message); });
+      spotifyPlayer.addListener('account_error', ({ message }) => { console.error(message); });
+      spotifyPlayer.addListener('playback_error', ({ message }) => { console.error(message); });
 
       // Playback status updates
-      player.addListener('player_state_changed', state => {
+      spotifyPlayer.addListener('player_state_changed', state => {
         if (state) {
           onPlayerStateChange(state);
         }
       });
 
       // Ready
-      player.addListener('ready', ({ device_id }) => {
+      spotifyPlayer.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
         onReady(device_id);
       });
 
       // Not Ready
-      player.addListener('not_ready', ({ device_id }) => {
+      spotifyPlayer.addListener('not_ready', ({ device_id }) => {
         console.log('Device ID has gone offline', device_id);
       });
 
       // Connect to the player
-      player.connect().then(success => {
+      spotifyPlayer.connect().then(success => {
         if (success) {
-          resolve(player);
+          resolve(spotifyPlayer);
         } else {
           reject('Failed to connect to the player!');
         }
@@ -58,7 +59,7 @@ export const playSpotifyTrack = async (trackUri, token) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      uris: [trackUri]
+      uris: [trackUri]  // Ensure this is the correct format
     })
   });
 
@@ -67,4 +68,10 @@ export const playSpotifyTrack = async (trackUri, token) => {
   }
 };
 
+export const toggleSpotifyPlayPause = () => {
+  if (spotifyPlayer) {
+    return spotifyPlayer.togglePlay();
+  }
+  return Promise.reject('Spotify player is not initialized');
+};
 
