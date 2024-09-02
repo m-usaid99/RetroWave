@@ -104,15 +104,18 @@
   font-size: 14px;
 }
 
+.searchSection {
+  height: 60%;
+}
+
 .searchResults {
   background-color: white;
   padding: 10px;
   width: 90%;
-  max-height: 50%;
+  max-height: 70%;
   border: 2px solid #A0A0A0;
   box-shadow: inset -3px -3px 5px #D3D3D3,
     inset 3px 3px 5px #404040;
-  margin: 0 auto 15px auto;
   overflow-y: auto;
 }
 
@@ -209,8 +212,7 @@
   display: flex;
   align-items: center;
   width: 50%;
-  margin-top: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .volumeControl label {

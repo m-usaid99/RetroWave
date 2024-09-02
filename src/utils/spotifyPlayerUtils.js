@@ -1,5 +1,6 @@
-// utils/spotifyPlayerUtils.js
 let spotifyPlayer = null;
+let pollingInterval = null;
+let positionInterval = null;
 
 export const loadSpotifyPlayer = (token, onPlayerStateChange, onReady) => {
   return new Promise((resolve, reject) => {
@@ -15,31 +16,25 @@ export const loadSpotifyPlayer = (token, onPlayerStateChange, onReady) => {
         volume: 0.5
       });
 
-      // Error handling
-      spotifyPlayer.addListener('initialization_error', ({ message }) => { console.error(message); });
-      spotifyPlayer.addListener('authentication_error', ({ message }) => { console.error(message); });
-      spotifyPlayer.addListener('account_error', ({ message }) => { console.error(message); });
-      spotifyPlayer.addListener('playback_error', ({ message }) => { console.error(message); });
-
-      // Playback status updates
       spotifyPlayer.addListener('player_state_changed', state => {
         if (state) {
           onPlayerStateChange(state);
+          if (!state.paused) {
+            startPositionInterval(state.duration / 1000, onPlayerStateChange);
+          } else {
+            clearPositionInterval();
+          }
         }
       });
 
-      // Ready
       spotifyPlayer.addListener('ready', ({ device_id }) => {
-        console.log('Ready with Device ID', device_id);
         onReady(device_id);
       });
 
-      // Not Ready
       spotifyPlayer.addListener('not_ready', ({ device_id }) => {
         console.log('Device ID has gone offline', device_id);
       });
 
-      // Connect to the player
       spotifyPlayer.connect().then(success => {
         if (success) {
           resolve(spotifyPlayer);
@@ -49,6 +44,71 @@ export const loadSpotifyPlayer = (token, onPlayerStateChange, onReady) => {
       });
     };
   });
+};
+
+// Function to update the elapsed time
+export const updateSpotifyElapsedTime = (onTimeUpdate) => {
+  if (spotifyPlayer) {
+    spotifyPlayer.addListener('player_state_changed', state => {
+      if (state) {
+        const currentTime = state.position / 1000;
+        const duration = state.duration / 1000;
+        onTimeUpdate(currentTime, duration);
+      }
+    });
+  }
+};
+
+
+// Attempt to force the device to be active without auto-playing music
+export const forceActivateDevice = async (device_id, token) => {
+  const response = await fetch(`https://api.spotify.com/v1/me/player`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      device_ids: [device_id],
+      play: false, // Ensure playback does not start automatically
+    }),
+  });
+
+  if (!response.ok) {
+    console.error('Error forcing device activation:', response.status, response.statusText);
+  }
+};
+
+// Polling function, updated with an attempt to force activation
+export const startPollingForDevice = (deviceName, token, onDeviceActive) => {
+  const poll = async () => {
+    const response = await fetch('https://api.spotify.com/v1/me/player/devices', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+
+    // Log the devices received from Spotify
+    console.log('Devices:', data.devices);
+
+    const device = data.devices.find(d => d.name === deviceName && d.is_active);
+
+    if (device) {
+      onDeviceActive(device);
+    } else {
+      console.log(`Device ${deviceName} is not active yet.`);
+
+      // Attempt to force activation if not yet active
+      const foundDevice = data.devices.find(d => d.name === deviceName);
+      if (foundDevice) {
+        await forceActivateDevice(foundDevice.id, token);
+      }
+    }
+  };
+
+  pollingInterval = setInterval(poll, 5000); // Poll every 5 seconds
 };
 
 export const playSpotifyTrack = async (trackUri, token) => {
@@ -76,15 +136,37 @@ export const toggleSpotifyPlayPause = () => {
   return Promise.reject('Spotify player is not initialized');
 };
 
-// Function to update the elapsed time
-export const updateSpotifyElapsedTime = (onTimeUpdate) => {
-  if (spotifyPlayer) {
-    spotifyPlayer.addListener('player_state_changed', state => {
+export const stopPollingForDevice = () => {
+  if (pollingInterval) {
+    clearInterval(pollingInterval);
+    pollingInterval = null;
+  }
+};
+
+const startPositionInterval = (duration, onPlayerStateChange, onTimeUpdate) => {
+  if (positionInterval) {
+    clearInterval(positionInterval);
+  }
+
+  positionInterval = setInterval(() => {
+    spotifyPlayer.getCurrentState().then(state => {
       if (state) {
-        const currentTime = state.position / 1000;
-        const duration = state.duration / 1000;
-        onTimeUpdate(currentTime, duration);
+        const position = state.position / 1000; // Convert to seconds
+        onPlayerStateChange({
+          ...state,
+          position,
+          duration
+        });
+        onTimeUpdate(position, duration);  // Update the current time and duration directly
       }
     });
+  }, 1000); // Update every second
+};
+
+
+const clearPositionInterval = () => {
+  if (positionInterval) {
+    clearInterval(positionInterval);
+    positionInterval = null;
   }
 };

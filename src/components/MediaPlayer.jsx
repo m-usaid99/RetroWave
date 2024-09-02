@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as mm from 'music-metadata';
 import { getSpotifyAuthorizationUrl, handleSpotifyCallback, searchSpotify } from '../utils/spotifyUtils';
-import { loadSpotifyPlayer, playSpotifyTrack, updateSpotifyElapsedTime } from '../utils/spotifyPlayerUtils';
+import { loadSpotifyPlayer, playSpotifyTrack, updateSpotifyElapsedTime, startPollingForDevice, stopPollingForDevice } from '../utils/spotifyPlayerUtils';
 import styles from './MediaPlayer.module.css';
 
 const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, setSpotifyPlayer }) => {
@@ -25,10 +25,11 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
     window.location.href = getSpotifyAuthorizationUrl(); // Redirect to Spotify's authorization page
   };
 
+  // Inside useEffect, make sure to load the Spotify player:
   useEffect(() => {
     if (selectedSource === 'spotify') {
       const fetchSpotifyToken = async () => {
-        const token = await handleSpotifyCallback(); // Handle the callback and get the token
+        const token = await handleSpotifyCallback();
         if (token) {
           setSpotifyToken(token);
 
@@ -41,13 +42,19 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
             },
             (playerInstance) => {
               setSpotifyPlayer(playerInstance);
-              updateSpotifyElapsedTime(onTimeUpdate);
             }
           );
+          startPollingForDevice('RetroWave', token, (device) => {
+            console.log('RetroWave device is active:', device);
+          });
         }
       };
       fetchSpotifyToken();
     }
+
+    return () => {
+      stopPollingForDevice();
+    };
   }, [selectedSource]);
 
   const handleSearch = async () => {
@@ -78,17 +85,6 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
     setCurrentTrackIndex(null); // Reset current track index
     onPlayPause(true); // Start playback
   };
-
-  // useEffect(() => {
-  //   if (selectedSource === 'spotify' && isPlaying) {
-  //     const interval = setInterval(async () => {
-  //       const { position, duration } = await getCurrentSpotifyTime();
-  //       onTimeUpdate(position, duration);
-  //     }, 1000);
-  //
-  //     return () => clearInterval(interval); // Cleanup on unmount or stop playing
-  //   }
-  // }, [isPlaying, selectedSource]);
 
 
   const handleFileUpload = async (event) => {
