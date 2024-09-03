@@ -161,23 +161,27 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
   };
 
   useEffect(() => {
-    if (audioRef.current) {
-      if (isPlaying && currentTrackIndex !== null) {
+    console.log('Current Track Index Changed:', currentTrackIndex);
+    if (audioRef.current && currentTrackIndex !== null) {
+      console.log('Setting audio src:', trackList[currentTrackIndex].url);
+      audioRef.current.src = trackList[currentTrackIndex].url;
+      audioRef.current.play();
+      onPlayPause(true); // Auto-play when a new track is selected
+    }
+  }, [currentTrackIndex]); // Trigger only when the track changes
+
+  useEffect(() => {
+    console.log('Is Playing Changed:', isPlaying);
+    if (audioRef.current && currentTrackIndex !== null) {
+      if (isPlaying) {
+        console.log('Playing audio');
         audioRef.current.play();
       } else {
+        console.log('Pausing audio');
         audioRef.current.pause();
       }
     }
-  }, [isPlaying, currentTrackIndex]);
-
-  useEffect(() => {
-    if (currentTrackIndex !== null && audioRef.current) {
-      audioRef.current.src = trackList[currentTrackIndex].url;
-      if (isPlaying) {
-        audioRef.current.play();
-      }
-    }
-  }, [currentTrackIndex, trackList, isPlaying]);
+  }, [isPlaying]);
 
   // Time update logic
   useEffect(() => {
