@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as mm from 'music-metadata';
 import { getSpotifyAuthorizationUrl, handleSpotifyCallback, searchSpotify } from '../utils/spotifyUtils';
-import { loadSpotifyPlayer, playSpotifyTrack, startPollingForDevice, stopPollingForDevice } from '../utils/spotifyPlayerUtils';
+import { loadSpotifyPlayer, playSpotifyTrack, startPollingForDevice, stopPollingForDevice, setSpotifyVolume } from '../utils/spotifyPlayerUtils';
 import styles from './MediaPlayer.module.css';
 
 const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, setSpotifyPlayer }) => {
@@ -154,9 +154,11 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
   };
 
   const handleVolumeChange = (event) => {
-    const volume = event.target.value;
-    if (audioRef.current) {
-      audioRef.current.volume = volume / 100;
+    const volume = event.target.value / 100; // Convert to 0-1 range
+    if (selectedSource === 'spotify') {
+      setSpotifyVolume(volume);
+    } else if (audioRef.current) {
+      audioRef.current.volume = volume;
     }
   };
 

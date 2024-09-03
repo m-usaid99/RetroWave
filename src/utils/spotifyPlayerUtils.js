@@ -156,3 +156,17 @@ const clearPositionInterval = () => {
     positionInterval = null;
   }
 };
+
+
+export const setSpotifyVolume = (volume) => {
+  if (spotifyPlayer) {
+    spotifyPlayer.setVolume(volume).then(() => {
+      console.log(`Volume set to ${volume * 100}%`);
+    }).catch(err => {
+      console.error('Failed to set volume:', err);
+    });
+  } else {
+    console.error('Spotify player is not initialized');
+  }
+};
+
