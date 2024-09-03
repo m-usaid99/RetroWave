@@ -23,18 +23,19 @@ export const getSpotifyAuthorizationUrl = () => {
 };
 
 export const handleSpotifyCallback = () => {
-  // Check if the URL contains the fragment identifier
   const hash = window.location.hash.substring(1); // Remove the `#`
   const params = new URLSearchParams(hash);
   const accessToken = params.get('access_token');
 
   if (accessToken) {
+    localStorage.setItem('spotifyToken', accessToken);
     window.history.pushState({}, document.title, "/"); // Clean up the URL
     return accessToken;
   }
 
-  return null;
+  return localStorage.getItem('spotifyToken');
 };
+
 
 export const searchSpotify = async (query, type, token) => {
   const endpoint = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=${type}&limit=10`;

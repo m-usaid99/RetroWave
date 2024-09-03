@@ -12,6 +12,7 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
   const [spotifyToken, setSpotifyToken] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef(null);
 
   const handleSourceChange = (event) => {
@@ -22,16 +23,24 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
   };
 
   const handleSpotifyLogin = () => {
+    localStorage.setItem('selectedSource', 'spotify');
     window.location.href = getSpotifyAuthorizationUrl(); // Redirect to Spotify's authorization page
   };
 
+
   useEffect(() => {
+    // Check if the selected source was previously Spotify
+    const savedSource = localStorage.getItem('selectedSource');
+    if (savedSource === 'spotify') {
+      setSelectedSource('spotify');
+      localStorage.removeItem('selectedSource'); // Clean up after use
+    }
+
     if (selectedSource === 'spotify') {
       const fetchSpotifyToken = async () => {
         const token = await handleSpotifyCallback();
         if (token) {
           setSpotifyToken(token);
-
           loadSpotifyPlayer(
             token,
             (state) => {
@@ -47,7 +56,10 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
 
           startPollingForDevice('RetroWave', token, (device) => {
             console.log('RetroWave device is active:', device);
+            setIsLoading(false);
           });
+        } else {
+          setIsLoading(false);
         }
       };
       fetchSpotifyToken();
