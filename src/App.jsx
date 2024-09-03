@@ -10,7 +10,7 @@ import MediaPlayer from './components/MediaPlayer';
 const App = () => {
   const [windows, setWindows] = useState({
     home: { open: true, x: 150, y: 300, width: 400, height: 300, zIndex: 2 },
-    media: { open: true, x: 425, y: 200, width: 600, height: 450, zIndex: 1 },
+    media: { open: true, minimized: false, x: 425, y: 200, width: 600, height: 450, zIndex: 1 },
     about: { open: false, x: 950, y: 600, width: 350, height: 200, zIndex: 0 },
     visualizer: { open: true, x: 375, y: 125, width: 800, height: 600, zIndex: 0 },
     settings: { open: false, x: 800, y: 100, width: 300, height: 200, zIndex: 0 },
@@ -116,6 +116,12 @@ const App = () => {
     }));
   };
 
+  const minimizeWindow = (windowKey) => {
+    setWindows(prev => ({
+      ...prev,
+      [windowKey]: { ...prev[windowKey], minimized: true, zIndex: -1 },
+    }));
+  };
   const bringToFront = (windowKey) => {
     setWindows(prev => {
       const maxZIndex = Math.max(...Object.values(prev).map(win => win.zIndex));
@@ -163,27 +169,26 @@ const App = () => {
         </Window>
       )}
 
-      {windows.media.open && (
-        <Window
-          title="Media"
-          width={windows.media.width}
-          height={windows.media.height}
-          x={windows.media.x}
-          y={windows.media.y}
-          zIndex={windows.media.zIndex}
-          closeWindow={() => closeWindow('media')}
-          bringToFront={() => bringToFront('media')}
-          updatePositionAndSize={(x, y, width, height) => updatePositionAndSize('media', x, y, width, height)}
-        >
-          <MediaPlayer
-            isPlaying={isPlaying}
-            onPlayPause={setIsPlaying}
-            onMetadataLoaded={handleMetadataLoaded}
-            onTimeUpdate={handleTimeUpdate}
-            setSpotifyPlayer={setSpotifyPlayer}
-          />
-        </Window>
-      )}
+      <Window
+        title="Media"
+        width={windows.media.width}
+        height={windows.media.height}
+        x={windows.media.x}
+        y={windows.media.y}
+        zIndex={windows.media.zIndex}
+        visibility={windows.media.minimized ? 'hidden' : 'visible'}
+        closeWindow={() => minimizeWindow('media')}
+        bringToFront={() => handleTextClick('media')}
+        updatePositionAndSize={(x, y, width, height) => updatePositionAndSize('media', x, y, width, height)}
+      >
+        <MediaPlayer
+          isPlaying={isPlaying}
+          onPlayPause={setIsPlaying}
+          onMetadataLoaded={handleMetadataLoaded}
+          onTimeUpdate={handleTimeUpdate}
+          setSpotifyPlayer={setSpotifyPlayer}
+        />
+      </Window>
 
       {windows.about.open && (
         <Window
