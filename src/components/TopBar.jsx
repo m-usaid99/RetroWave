@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
 import styles from './TopBar.module.css';
 
-function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPause, currentTime, duration }) {
+function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPause, currentTime, duration, onSeek }) {
   const songNameRef = useRef(null);
   const artistAlbumRef = useRef(null);
+  const progressBarRef = useRef(null);
 
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
@@ -26,6 +27,20 @@ function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPa
     applyMarquee(artistAlbumRef.current);
   }, [songName, artistName, albumName]);
 
+  // Handle progress bar click to calculate the new seek time
+  const handleProgressBarClick = (event) => {
+    if (!duration) return;
+
+    const progressBarRect = progressBarRef.current.getBoundingClientRect();
+    const clickX = event.clientX - progressBarRect.left;
+    const progressBarWidth = progressBarRect.width;
+
+    // Calculate the new time based on where the user clicked
+    const newTime = (clickX / progressBarWidth) * duration;
+
+    // Call the onSeek function to pass the new time up to the App component
+    onSeek(newTime);
+  };
 
   return (
     <div className={styles.topBar}>
@@ -55,7 +70,7 @@ function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPa
         </div>
         <div className={styles.timeLabel}>
           <span className={styles.startTime}>{formatTime(currentTime)}</span>
-          <div className={styles.progressBarContainer}>
+          <div className={styles.progressBarContainer} ref={progressBarRef} onClick={handleProgressBarClick}>
             <div className={styles.progressBar} style={{ width: `${progressPercentage}%` }} />          </div>
           <span className={styles.endTime}>{formatTime(duration)}</span>
         </div>

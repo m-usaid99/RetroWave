@@ -4,7 +4,7 @@ import { getSpotifyAuthorizationUrl, handleSpotifyCallback, searchSpotify } from
 import { loadSpotifyPlayer, playSpotifyTrack, startPollingForDevice, stopPollingForDevice, setSpotifyVolume } from '../utils/spotifyPlayerUtils';
 import styles from './MediaPlayer.module.css';
 
-const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, setSpotifyPlayer }) => {
+const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, setSpotifyPlayer, seekTime }) => {
   const [selectedSource, setSelectedSource] = useState('local'); // Default to Local Files
   const [trackList, setTrackList] = useState([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(null);
@@ -173,6 +173,13 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
       audioRef.current.volume = volume;
     }
   };
+
+  // Handle seeking to the new time when `seekTime` changes
+  useEffect(() => {
+    if (audioRef.current && seekTime !== null) {
+      audioRef.current.currentTime = seekTime;  // Set the audio's current time to the new seek time
+    }
+  }, [seekTime]);  // Only run when seekTime changes
 
   useEffect(() => {
     console.log('Current Track Index Changed:', currentTrackIndex);

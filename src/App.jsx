@@ -25,6 +25,7 @@ const App = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [spotifyPlayer, setSpotifyPlayer] = useState(null);
+  const [seekTime, setSeekTime] = useState(null);
 
   const handlePlayPause = () => {
     if (spotifyPlayer) {
@@ -53,6 +54,12 @@ const App = () => {
       setDuration(0); // Set to 0 or some default value if duration is not available
     }
   };
+  // New handleSeek function to capture the newTime
+  const handleSeek = (newTime) => {
+    console.log('New seek time:', newTime);
+    setSeekTime(newTime); // Update the seek time
+  };
+
 
   const adjustWindowPositions = () => {
     setWindows(prevWindows => {
@@ -150,6 +157,7 @@ const App = () => {
         onPlayPause={handlePlayPause}
         currentTime={currentTime}
         duration={duration}
+        onSeek={handleSeek}
       />
       <Sidebar onTextClick={handleTextClick} />
 
@@ -187,6 +195,7 @@ const App = () => {
           onMetadataLoaded={handleMetadataLoaded}
           onTimeUpdate={handleTimeUpdate}
           setSpotifyPlayer={setSpotifyPlayer}
+          seekTime={seekTime}
         />
       </Window>
 
