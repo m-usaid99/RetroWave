@@ -13,8 +13,8 @@ const App = () => {
   const [windows, setWindows] = useState({
     home: { open: true, minimized: false, x: 150, y: 300, width: 400, height: 300, zIndex: 2 },
     media: { open: true, minimized: false, x: 425, y: 200, width: 600, height: 450, zIndex: 1 },
-    about: { open: false, minimized: false, x: 950, y: 600, width: 350, height: 200, zIndex: 1 },
-    visualizer: { open: true, minimized: false, x: 375, y: 125, width: 800, height: 600, zIndex: 1 },
+    about: { open: false, minimized: false, x: 950, y: 600, width: 350, height: 200, zIndex: 0 },
+    visualizer: { open: true, minimized: false, x: 375, y: 125, width: 800, height: 600, zIndex: 0 },
     settings: { open: false, minimized: false, x: 800, y: 100, width: 300, height: 200, zIndex: 0 },
   });
 

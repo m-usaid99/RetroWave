@@ -45,7 +45,7 @@
   .sidebar {
     width: 100%;
     display: flex;
-    margin-top: 100px;
+    margin-top: 200px;
     z-index: 9999;
     height: 50px;
     flex-direction: row;

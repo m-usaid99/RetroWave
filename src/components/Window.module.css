@@ -11,12 +11,11 @@
 @media (max-width: 768px) {
   .window {
     width: 100vw;
-    top: 157.5px;
+    top: 252.5px;
     height: calc(100vh - 150px);
     box-shadow: none;
   }
 }
-
 
 .titleBar {
   background-color: #000080;

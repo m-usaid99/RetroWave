@@ -15,12 +15,6 @@
   z-index: 1000;
 }
 
-@media (max-width: 768px) {
-  .topBar {
-    left: 0;
-  }
-}
-
 .playPauseBlock {
   width: 100px;
   height: 100px;
@@ -86,13 +80,10 @@
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  /*overflow: hidden;*/
-  /* Ensure overflow is hidden */
 }
 
 .marquee {
   white-space: nowrap;
-  /*overflow: hidden;*/
   position: relative;
   width: 100%;
 }
@@ -190,10 +181,4 @@
   width: 50px;
   height: 50px;
   filter: brightness(0) saturate(100%) invert(100%) sepia(1%) saturate(437%) hue-rotate(6deg) brightness(118%) contrast(100%);
-}
-
-.lastFMIcon {
-  filter: brightness(0) saturate(100%) invert(100%) sepia(1%) saturate(437%) hue-rotate(6deg) brightness(118%) contrast(100%);
-  width: 50px;
-  height: 50px;
 }
