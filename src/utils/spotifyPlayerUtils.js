@@ -98,7 +98,6 @@ export const startPollingForDevice = (deviceName, token, onDeviceActive) => {
 };
 
 export const playSpotifyTrack = async (trackUri, token) => {
-  console.log(trackUri, token);
   const response = await fetch(`https://api.spotify.com/v1/me/player/play`, {
     method: 'PUT',
     headers: {

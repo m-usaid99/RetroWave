@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as mm from 'music-metadata';
-import { getSpotifyAuthorizationUrl, handleSpotifyCallback, searchSpotify } from '../utils/spotifyUtils';
+import { getSpotifyAuthorizationUrl, handleSpotifyCallback, fetchSpotifyToken, searchSpotify } from '../utils/spotifyUtils';
 import { loadSpotifyPlayer, playSpotifyTrack, startPollingForDevice, stopPollingForDevice, setSpotifyVolume } from '../utils/spotifyPlayerUtils';
 import styles from './MediaPlayer.module.css';
 
@@ -29,22 +29,15 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
 
 
   useEffect(() => {
-    // Check if the selected source was previously Spotify
-    const savedSource = localStorage.getItem('selectedSource');
-    if (savedSource === 'spotify') {
-      setSelectedSource('spotify');
-      localStorage.removeItem('selectedSource'); // Clean up after use
-    }
-
     if (selectedSource === 'spotify') {
-      const fetchSpotifyToken = async () => {
-        const token = await handleSpotifyCallback();
+      setIsLoading(true);
+      const fetchTokenAndLoadPlayer = async () => {
+        const token = await fetchSpotifyToken();
         if (token) {
           setSpotifyToken(token);
           loadSpotifyPlayer(
             token,
             (state) => {
-              // Update progress bar and time text
               onTimeUpdate(state.position / 1000, state.duration / 1000);
               onPlayPause(!state.paused);
             },
@@ -55,21 +48,19 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
           );
 
           startPollingForDevice('RetroWave', token, (device) => {
-            console.log('RetroWave device is active:', device);
             setIsLoading(false);
           });
         } else {
           setIsLoading(false);
         }
       };
-      fetchSpotifyToken();
+      fetchTokenAndLoadPlayer();
     }
 
     return () => {
-      stopPollingForDevice(); // Clean up polling when the component is unmounted
+      stopPollingForDevice();
     };
   }, [selectedSource]);
-
 
   const handleSearch = async () => {
     if (spotifyToken && searchQuery) {
@@ -182,9 +173,7 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
   }, [seekTime]);  // Only run when seekTime changes
 
   useEffect(() => {
-    console.log('Current Track Index Changed:', currentTrackIndex);
     if (audioRef.current && currentTrackIndex !== null) {
-      console.log('Setting audio src:', trackList[currentTrackIndex].url);
       audioRef.current.src = trackList[currentTrackIndex].url;
       audioRef.current.play();
       onPlayPause(true); // Auto-play when a new track is selected
@@ -192,13 +181,10 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
   }, [currentTrackIndex]); // Trigger only when the track changes
 
   useEffect(() => {
-    console.log('Is Playing Changed:', isPlaying);
     if (audioRef.current && currentTrackIndex !== null) {
       if (isPlaying) {
-        console.log('Playing audio');
         audioRef.current.play();
       } else {
-        console.log('Pausing audio');
         audioRef.current.pause();
       }
     }

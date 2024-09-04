@@ -56,7 +56,6 @@ const App = () => {
   };
   // New handleSeek function to capture the newTime
   const handleSeek = (newTime) => {
-    console.log('New seek time:', newTime);
     setSeekTime(newTime); // Update the seek time
   };
 
