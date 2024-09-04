@@ -169,3 +169,15 @@ export const setSpotifyVolume = (volume) => {
   }
 };
 
+export const seekSpotifyTrack = (seekTimeInSeconds) => {
+  if (spotifyPlayer) {
+    const seekTimeInMilliseconds = seekTimeInSeconds * 1000; // Convert seconds to milliseconds
+    spotifyPlayer.seek(seekTimeInMilliseconds).then(() => {
+      console.log(`Seeked to ${seekTimeInSeconds} seconds`);
+    }).catch(err => {
+      console.error('Failed to seek track:', err);
+    });
+  } else {
+    console.error('Spotify player is not initialized');
+  }
+};
