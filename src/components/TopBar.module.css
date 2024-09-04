@@ -182,3 +182,75 @@
   height: 50px;
   filter: brightness(0) saturate(100%) invert(100%) sepia(1%) saturate(437%) hue-rotate(6deg) brightness(118%) contrast(100%);
 }
+
+@media (max-width: 768px) {
+  .topBar {
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    background-color: #555574;
+  }
+
+  .songInfoBlock {
+    width: 100%;
+    height: 75px;
+    border-bottom: none;
+  }
+
+
+  .songName {
+    font-size: 24px;
+  }
+
+  .artistAlbum {
+    font-size: 18px;
+  }
+
+  .albumArt {
+    width: 75px;
+    height: 75px;
+  }
+
+  .buttonAndProgressMobile {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    background-color: #555574;
+  }
+
+  .playPauseBlock {
+    width: 75px;
+    height: 75px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .playPauseIcon {
+    font-size: 28px;
+  }
+
+  .progressBarContainer {
+    width: 60%;
+  }
+
+  .startTime {
+    margin-bottom: 0;
+    margin-top: 5px;
+    margin-right: 10px;
+    margin-left: 10px;
+    font-size: 12px;
+  }
+
+  .endTime {
+    margin-bottom: 0;
+    margin-top: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 12px;
+  }
+}

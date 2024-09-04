@@ -11,7 +11,7 @@
 @media (max-width: 768px) {
   .window {
     width: 100vw;
-    top: 252.5px;
+    top: 222.5px;
     height: calc(100vh - 150px);
     box-shadow: none;
   }

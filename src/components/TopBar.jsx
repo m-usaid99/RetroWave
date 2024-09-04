@@ -1,10 +1,13 @@
 import { useEffect, useRef } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import styles from './TopBar.module.css';
 
 function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPause, currentTime, duration, onSeek }) {
   const songNameRef = useRef(null);
   const artistAlbumRef = useRef(null);
   const progressBarRef = useRef(null);
+
+  const isMobile = useMediaQuery({ maxWidth: 768 }); // Detect if the user is on mobile
 
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
@@ -27,51 +30,40 @@ function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPa
     applyMarquee(artistAlbumRef.current);
   }, [songName, artistName, albumName]);
 
-  // Handle progress bar click to calculate the new seek time
   const handleProgressBarClick = (event) => {
     if (!duration) return;
 
     const progressBarRect = progressBarRef.current.getBoundingClientRect();
     const clickX = event.clientX - progressBarRect.left;
     const progressBarWidth = progressBarRect.width;
-
-    // Calculate the new time based on where the user clicked
     const newTime = (clickX / progressBarWidth) * duration;
 
-    // Call the onSeek function to pass the new time up to the App component
     onSeek(newTime);
   };
 
-  return (
+  // Desktop JSX
+  const renderDesktop = () => (
     <div className={styles.topBar}>
       <div className={styles.playPauseBlock} onClick={onPlayPause}>
-        <span className={styles.playPauseIcon}>
-          {isPlaying ? '❚❚' : '►'}
-        </span>
+        <span className={styles.playPauseIcon}>{isPlaying ? '❚❚' : '►'}</span>
       </div>
       <div className={styles.songInfoBlock}>
         <div className={styles.songDetailsContainer}>
-
-          {albumArt && (
-            <img className={styles.albumArt} src={albumArt} alt="album art" />
-          )}
+          {albumArt && <img className={styles.albumArt} src={albumArt} alt="album art" />}
           <div className={styles.songDetails}>
             <div ref={songNameRef} className={styles.marquee}>
-              <div className={styles.songName} >
-                {songName}
-              </div>
+              <div className={styles.songName}>{songName}</div>
             </div>
             <div ref={artistAlbumRef} className={styles.marquee}>
-              <div className={styles.artistAlbum} >
-                {albumName} - {artistName}
-              </div>
+              <div className={styles.artistAlbum}>{albumName} - {artistName}</div>
             </div>
           </div>
         </div>
         <div className={styles.timeLabel}>
           <span className={styles.startTime}>{formatTime(currentTime)}</span>
           <div className={styles.progressBarContainer} ref={progressBarRef} onClick={handleProgressBarClick}>
-            <div className={styles.progressBar} style={{ width: `${progressPercentage}%` }} />          </div>
+            <div className={styles.progressBar} style={{ width: `${progressPercentage}%` }} />
+          </div>
           <span className={styles.endTime}>{formatTime(duration)}</span>
         </div>
       </div>
@@ -81,8 +73,38 @@ function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPa
       <div className={styles.githubButton}>
         <img className={styles.githubIcon} src="https://unpkg.com/pixelarticons@1.8.1/svg/github.svg" alt="GitHub" />
       </div>
-    </div >
+    </div>
   );
+
+  // Mobile JSX
+  const renderMobile = () => (
+    <div className={styles.topBar}>
+      <div className={styles.songInfoBlock}>
+        {albumArt && <img className={styles.albumArt} src={albumArt} alt="album art" />}
+        <div className={styles.songDetails}>
+          <div ref={songNameRef} className={styles.marquee}>
+            <div className={styles.songName}>{songName}</div>
+          </div>
+          <div ref={artistAlbumRef} className={styles.marquee}>
+            <div className={styles.artistAlbum}>{albumName} - {artistName}</div>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.buttonAndProgressMobile}>
+        <div className={styles.playPauseBlock} onClick={onPlayPause}>
+          <span className={styles.playPauseIcon}>{isPlaying ? '❚❚' : '►'}</span>
+        </div>
+        <span className={styles.startTime}>{formatTime(currentTime)}</span>
+        <div className={styles.progressBarContainer} ref={progressBarRef} onClick={handleProgressBarClick}>
+          <div className={styles.progressBar} style={{ width: `${progressPercentage}%` }} />
+        </div>
+        <span className={styles.endTime}>{formatTime(duration)}</span>
+      </div>
+    </div>
+  );
+
+  return isMobile ? renderMobile() : renderDesktop();
 }
 
 export default TopBar;
