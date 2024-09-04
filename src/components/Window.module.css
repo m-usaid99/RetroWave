@@ -12,7 +12,7 @@
   .window {
     width: 100vw;
     top: 222.5px;
-    height: calc(100vh - 150px);
+    height: calc(100vh - 222.5px);
     box-shadow: none;
   }
 }
