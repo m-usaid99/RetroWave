@@ -93,7 +93,7 @@ function TopBar({ songName, artistName, albumName, albumArt, isPlaying, onPlayPa
 
       <div className={styles.buttonAndProgressMobile}>
         <div className={styles.playPauseBlock} onClick={onPlayPause}>
-          <span className={styles.playPauseIcon}>{isPlaying ? '❚❚' : '►'}</span>
+          <span className={styles.playPauseIcon}>{isPlaying ? '❚❚' : '\u25B6'}</span>
         </div>
         <span className={styles.startTime}>{formatTime(currentTime)}</span>
         <div className={styles.progressBarContainer} ref={progressBarRef} onClick={handleProgressBarClick}>
