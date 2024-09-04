@@ -14,3 +14,9 @@
   box-shadow: inset -3px -3px 5px #D3D3D3,
     inset 3px 3px 5px #404040;
 }
+
+@media screen and (max-width: 768px) {
+  .content {
+    height: calc(100% - 200px);
+  }
+}
