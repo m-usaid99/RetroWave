@@ -6,3 +6,27 @@
   display: grid;
   padding: 0;
 }
+
+/* Mobile Layout */
+@media (max-width: 768px) {
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .topBar {
+    height: 100px;
+    width: 100%;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .windowContainer {
+    flex-grow: 1;
+    height: 100%;
+    overflow: auto;
+  }
+}

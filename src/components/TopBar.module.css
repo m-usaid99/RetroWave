@@ -15,6 +15,12 @@
   z-index: 1000;
 }
 
+@media (max-width: 768px) {
+  .topBar {
+    left: 0;
+  }
+}
+
 .playPauseBlock {
   width: 100px;
   height: 100px;

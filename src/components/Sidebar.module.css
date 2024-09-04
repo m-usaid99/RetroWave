@@ -40,3 +40,18 @@
   border-bottom: 2px solid #DCDCDC;
   background-color: #a0a0b0;
 }
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    display: flex;
+    margin-top: 100px;
+    z-index: 9999;
+    height: 100px;
+    flex-direction: row;
+  }
+
+  .sidebarItem {
+    padding: 10px;
+  }
+}

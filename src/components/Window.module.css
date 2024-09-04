@@ -8,6 +8,16 @@
   font-family: 'Courier New', Courier, monospace;
 }
 
+@media (max-width: 768px) {
+  .window {
+    width: 100vw;
+    top: 212px;
+    height: calc(100vh - 200px);
+    box-shadow: none;
+  }
+}
+
+
 .titleBar {
   background-color: #000080;
   color: white;

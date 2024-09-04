@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useMediaQuery } from 'react-responsive'; // For mobile detection
 import Window from './components/Window';
+import WindowMobile from './components/WindowMobile'; // Mobile specific component
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
 import styles from './App.module.css';
@@ -15,6 +17,7 @@ const App = () => {
     visualizer: { open: true, x: 375, y: 125, width: 800, height: 600, zIndex: 0 },
     settings: { open: false, x: 800, y: 100, width: 300, height: 200, zIndex: 0 },
   });
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState({
     title: 'No Track Selected',
@@ -27,13 +30,17 @@ const App = () => {
   const [spotifyPlayer, setSpotifyPlayer] = useState(null);
   const [seekTime, setSeekTime] = useState(null);
 
+  const isMobile = useMediaQuery({ maxWidth: 768 }); // Detect mobile layout
+
   const handlePlayPause = () => {
     if (spotifyPlayer) {
-      toggleSpotifyPlayPause().then(() => {
-        setIsPlaying(!isPlaying);
-      }).catch(err => {
-        console.error('Failed to toggle Spotify playback:', err);
-      });
+      toggleSpotifyPlayPause()
+        .then(() => {
+          setIsPlaying(!isPlaying);
+        })
+        .catch(err => {
+          console.error('Failed to toggle Spotify playback:', err);
+        });
     } else {
       setIsPlaying(!isPlaying);
     }
@@ -44,21 +51,18 @@ const App = () => {
     setDuration(total);
   };
 
-  const handleMetadataLoaded = (metadata) => {
+  const handleMetadataLoaded = metadata => {
     setCurrentTrack(metadata);
-
-    // Check if duration exists and is not null or undefined before setting it
     if (metadata && metadata.duration) {
       setDuration(metadata.duration);
     } else {
-      setDuration(0); // Set to 0 or some default value if duration is not available
+      setDuration(0); // Set to 0 if duration is not available
     }
   };
-  // New handleSeek function to capture the newTime
-  const handleSeek = (newTime) => {
-    setSeekTime(newTime); // Update the seek time
-  };
 
+  const handleSeek = newTime => {
+    setSeekTime(newTime);
+  };
 
   const adjustWindowPositions = () => {
     setWindows(prevWindows => {
@@ -71,14 +75,12 @@ const App = () => {
         let newX = win.x;
         let newY = win.y;
 
-        // Ensure window stays within the screen horizontally
         if (win.x + win.width > screenWidth) {
           newX = screenWidth - win.width - 10;
         } else if (win.x < 0) {
           newX = 10;
         }
 
-        // Ensure window stays within the screen vertically
         if (win.y + win.height > screenHeight) {
           newY = screenHeight - win.height - 10;
         } else if (win.y < 0) {
@@ -105,7 +107,7 @@ const App = () => {
     };
   }, []);
 
-  const handleTextClick = (windowKey) => {
+  const handleTextClick = windowKey => {
     setWindows(prev => {
       const maxZIndex = Math.max(...Object.values(prev).map(win => win.zIndex));
       return {
@@ -115,20 +117,21 @@ const App = () => {
     });
   };
 
-  const closeWindow = (windowKey) => {
+  const closeWindow = windowKey => {
     setWindows(prev => ({
       ...prev,
       [windowKey]: { ...prev[windowKey], open: false },
     }));
   };
 
-  const minimizeWindow = (windowKey) => {
+  const minimizeWindow = windowKey => {
     setWindows(prev => ({
       ...prev,
       [windowKey]: { ...prev[windowKey], minimized: true, zIndex: -1 },
     }));
   };
-  const bringToFront = (windowKey) => {
+
+  const bringToFront = windowKey => {
     setWindows(prev => {
       const maxZIndex = Math.max(...Object.values(prev).map(win => win.zIndex));
       return {
@@ -160,94 +163,121 @@ const App = () => {
       />
       <Sidebar onTextClick={handleTextClick} />
 
-      {windows.home.open && (
-        <Window
+      {isMobile && windows.home.open ? (
+        <WindowMobile
           title="Home"
-          width={windows.home.width}
-          height={windows.home.height}
-          x={windows.home.x}
-          y={windows.home.y}
-          zIndex={windows.home.zIndex}
           closeWindow={() => closeWindow('home')}
-          bringToFront={() => bringToFront('home')}
-          updatePositionAndSize={(x, y, width, height) => updatePositionAndSize('home', x, y, width, height)}
         >
           <Home />
-        </Window>
+        </WindowMobile>
+      ) : (
+        windows.home.open && (
+          <Window
+            title="Home"
+            width={windows.home.width}
+            height={windows.home.height}
+            x={windows.home.x}
+            y={windows.home.y}
+            zIndex={windows.home.zIndex}
+            closeWindow={() => closeWindow('home')}
+            bringToFront={() => bringToFront('home')}
+            updatePositionAndSize={(x, y, width, height) => updatePositionAndSize('home', x, y, width, height)}
+          >
+            <Home />
+          </Window>
+        )
       )}
 
-      <Window
-        title="Media"
-        width={windows.media.width}
-        height={windows.media.height}
-        x={windows.media.x}
-        y={windows.media.y}
-        zIndex={windows.media.zIndex}
-        visibility={windows.media.minimized ? 'hidden' : 'visible'}
-        closeWindow={() => minimizeWindow('media')}
-        bringToFront={() => handleTextClick('media')}
-        updatePositionAndSize={(x, y, width, height) => updatePositionAndSize('media', x, y, width, height)}
-      >
-        <MediaPlayer
-          isPlaying={isPlaying}
-          onPlayPause={setIsPlaying}
-          onMetadataLoaded={handleMetadataLoaded}
-          onTimeUpdate={handleTimeUpdate}
-          setSpotifyPlayer={setSpotifyPlayer}
-          seekTime={seekTime}
-        />
-      </Window>
+      {!windows.media.minimized && (
+        isMobile ? (
+          <WindowMobile
+            title="Media Player"
+            closeWindow={() => minimizeWindow('media')}>
+            <MediaPlayer
+              isPlaying={isPlaying}
+              onPlayPause={setIsPlaying}
+              onMetadataLoaded={handleMetadataLoaded}
+              onTimeUpdate={handleTimeUpdate}
+              setSpotifyPlayer={setSpotifyPlayer}
+              seekTime={seekTime}
+            />
+          </WindowMobile>)
+          : (
+            <Window
+              title="Media"
+              width={windows.media.width}
+              height={windows.media.height}
+              x={windows.media.x}
+              y={windows.media.y}
+              zIndex={windows.media.zIndex}
+              visibility={windows.media.minimized ? 'hidden' : 'visible'}
+              closeWindow={() => minimizeWindow('media')}
+              bringToFront={() => handleTextClick('media')}
+              updatePositionAndSize={(x, y, width, height) => updatePositionAndSize('media', x, y, width, height)}
+            >
+              <MediaPlayer
+                isPlaying={isPlaying}
+                onPlayPause={setIsPlaying}
+                onMetadataLoaded={handleMetadataLoaded}
+                onTimeUpdate={handleTimeUpdate}
+                setSpotifyPlayer={setSpotifyPlayer}
+                seekTime={seekTime}
+              />
+            </Window>
+          )
+      )
+      }
 
-      {windows.about.open && (
-        <Window
-          title="About"
-          width={windows.about.width}
-          height={windows.about.height}
-          x={windows.about.x}
-          y={windows.about.y}
-          zIndex={windows.about.zIndex}
-          closeWindow={() => closeWindow('about')}
-          bringToFront={() => bringToFront('about')}
-          updatePositionAndSize={(x, y, height, width) => updatePositionAndSize('about', x, y, height, width)}
-        >
-          <p>About content goes here.</p>
-        </Window>
-      )}
-
-      {windows.visualizer.open && (
-        <Window
-          title="Visualizer"
-          width={windows.visualizer.width}
-          height={windows.visualizer.height}
-          x={windows.visualizer.x}
-          y={windows.visualizer.y}
-          zIndex={windows.visualizer.zIndex}
-          closeWindow={() => closeWindow('visualizer')}
-          bringToFront={() => bringToFront('visualizer')}
-          updatePositionAndSize={(x, y, height, width) => updatePositionAndSize('visualizer', x, y, height, width)}
-        >
-          <p>Visualizer content goes here.</p>
-        </Window>
-      )}
-
-      {windows.settings.open && (
-        <Window
-          title="Settings"
-          width={windows.settings.width}
-          height={windows.settings.height}
-          x={windows.settings.x}
-          y={windows.settings.y}
-          zIndex={windows.settings.zIndex}
-          closeWindow={() => closeWindow('settings')}
-          bringToFront={() => bringToFront('settings')}
-          updatePositionAndSize={(x, y) => updatePositionAndSize('settings', x, y)}
-        >
-          <p>Settings content goes here.</p>
-        </Window>
-      )}
+      {/**/}
+      {/* {windows.about.open && ( */}
+      {/*   <Window */}
+      {/*     title="About" */}
+      {/*     width={windows.about.width} */}
+      {/*     height={windows.about.height} */}
+      {/*     x={windows.about.x} */}
+      {/*     y={windows.about.y} */}
+      {/*     zIndex={windows.about.zIndex} */}
+      {/*     closeWindow={() => closeWindow('about')} */}
+      {/*     bringToFront={() => bringToFront('about')} */}
+      {/*     updatePositionAndSize={(x, y, height, width) => updatePositionAndSize('about', x, y, height, width)} */}
+      {/*   > */}
+      {/*     <p>About content goes here.</p> */}
+      {/*   </Window> */}
+      {/* )} */}
+      {/**/}
+      {/* {windows.visualizer.open && ( */}
+      {/*   <Window */}
+      {/*     title="Visualizer" */}
+      {/*     width={windows.visualizer.width} */}
+      {/*     height={windows.visualizer.height} */}
+      {/*     x={windows.visualizer.x} */}
+      {/*     y={windows.visualizer.y} */}
+      {/*     zIndex={windows.visualizer.zIndex} */}
+      {/*     closeWindow={() => closeWindow('visualizer')} */}
+      {/*     bringToFront={() => bringToFront('visualizer')} */}
+      {/*     updatePositionAndSize={(x, y, height, width) => updatePositionAndSize('visualizer', x, y, height, width)} */}
+      {/*   > */}
+      {/*     <p>Visualizer content goes here.</p> */}
+      {/*   </Window> */}
+      {/* )} */}
+      {/**/}
+      {/* {windows.settings.open && ( */}
+      {/*   <Window */}
+      {/*     title="Settings" */}
+      {/*     width={windows.settings.width} */}
+      {/*     height={windows.settings.height} */}
+      {/*     x={windows.settings.x} */}
+      {/*     y={windows.settings.y} */}
+      {/*     zIndex={windows.settings.zIndex} */}
+      {/*     closeWindow={() => closeWindow('settings')} */}
+      {/*     bringToFront={() => bringToFront('settings')} */}
+      {/*     updatePositionAndSize={(x, y, width, height) => updatePositionAndSize('settings', x, y, width, height)} */}
+      {/*   > */}
+      {/*     <p>Settings content goes here.</p> */}
+      {/*   </Window> */}
+      {/* )} */}
     </div>
   );
 };
 
 export default App;
-
