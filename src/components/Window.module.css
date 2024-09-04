@@ -4,15 +4,15 @@
   border: 2px solid black;
   background-color: #B0B0C0;
   box-shadow: 5px 5px black;
-  position: relative;
+  position: absolute;
   font-family: 'Courier New', Courier, monospace;
 }
 
 @media (max-width: 768px) {
   .window {
     width: 100vw;
-    top: 212px;
-    height: calc(100vh - 200px);
+    top: 157.5px;
+    height: calc(100vh - 150px);
     box-shadow: none;
   }
 }
