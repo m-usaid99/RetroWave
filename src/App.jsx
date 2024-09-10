@@ -8,6 +8,7 @@ import styles from './App.module.css';
 import { Home } from './components/Home';
 import { toggleSpotifyPlayPause } from './utils/spotifyPlayerUtils';
 import MediaPlayer from './components/MediaPlayer';
+import { Visualizer } from './components/Visualizer';
 
 const App = () => {
   const [windows, setWindows] = useState({
@@ -230,7 +231,7 @@ const App = () => {
         'MediaPlayer'
       )}
       {renderWindow('about', <p>About content goes here</p>)}
-      {renderWindow('visualizer', <p>Visualizer content goes here</p>)}
+      {renderWindow('visualizer', <Visualizer width={windows.visualizer.width} height={windows.visualizer.height} />)}
       {renderWindow('settings', <p>Settings content goes here</p>)}
     </div>
   );
