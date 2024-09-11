@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { SimpleSketch } from './SimpleSketch';
 import useResizeObserver from 'use-resize-observer'; // For observing window resize
+import styles from './Visualizer.module.css';
 
 export const Visualizer = () => {
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
@@ -13,9 +14,11 @@ export const Visualizer = () => {
   });
 
   return (
-    <div ref={ref} style={{ width: '100%', height: '100%' }}>
+    <div ref={ref} className={styles.content}>
       <h3>This be a visualizer</h3>
-      <SimpleSketch width={dimensions.width} height={dimensions.height} />
+      <div className={styles.sketch}>
+        <SimpleSketch width={dimensions.width} height={dimensions.height} />
+      </div>
     </div>
   );
 };
