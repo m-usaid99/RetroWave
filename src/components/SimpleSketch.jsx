@@ -26,8 +26,8 @@ function sketch(p) {
     // Set up the analyserNode if provided
     if (props.analyserNode && props.analyserNode !== analyserNode) {
       analyserNode = props.analyserNode;
-      analyserNode.fftSize = 256; // Adjust the FFT size as needed
-      analyserNode.smoothingTimeConstant = 0.9; // Increase smoothing
+      analyserNode.fftSize = 512; // Adjust the FFT size as needed
+      analyserNode.smoothingTimeConstant = 0.95; // Increase smoothing
       bufferLength = analyserNode.frequencyBinCount;
       dataArray = new Uint8Array(bufferLength);
     }
@@ -76,17 +76,36 @@ function sketch(p) {
       // Amplification factor
       let amplification = 0.75; // Adjust as needed
 
+      // Define gradient colors
+      let startColor = p.color('#358585'); // Muted teal
+      let midColor = p.color('#FF4500');   // Vibrant orange-red
+      let endColor = p.color('#B0B0C0');   // Soft grayish-blue
+
       for (let i = 0; i < bufferLength; i++) {
         let amplitude = dataArray[i];
         let normalizedValue = amplitude / 255;
 
         // Apply exponential scaling and amplification
-        let barHeight = Math.pow(normalizedValue, 1.5) * visHeight * amplification;
+        let barHeight = normalizedValue * visHeight * amplification;
 
         // Ensure bar height does not exceed visualization area height
         barHeight = Math.min(barHeight, visHeight);
 
-        p.fill(255 - amplitude, amplitude, 150);
+        let barColor;
+        // Calculate gradient color
+        let t = i / (bufferLength - 1); // Value between 0 and 1
+        // let barColor = p.lerpColor(startColor, endColor, t);
+        if (t <= 0.5) {
+          let t2 = t * 2;
+          barColor = p.lerpColor(startColor, midColor, t2);
+        } else {
+          let t2 = (t - 0.5) * 2;
+          barColor = p.lerpColor(midColor, endColor, t2);
+        }
+
+        // Set the bar color
+        p.fill(barColor);
+
         p.rect(
           x,
           visY + visHeight - barHeight,

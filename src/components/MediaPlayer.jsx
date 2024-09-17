@@ -265,8 +265,6 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
             animationIdRef.current = requestAnimationFrame(logAudioData);
           }
         };
-
-        logAudioData();
       }
 
       // Cleanup function
