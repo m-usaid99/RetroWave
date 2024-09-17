@@ -12,7 +12,7 @@ import {
   from '../utils/spotifyPlayerUtils';
 import styles from './MediaPlayer.module.css';
 
-const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, setSpotifyPlayer, seekTime }) => {
+const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, setSpotifyPlayer, seekTime, setAnalyserNode }) => {
   const [selectedSource, setSelectedSource] = useState('local'); // Default to Local Files
   const [trackList, setTrackList] = useState([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(null);
@@ -22,6 +22,11 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const analyserRef = useRef(null);
+  const sourceRef = useRef(null);
+  const dataArrayRef = useRef(null);
+  const animationIdRef = useRef(null); // To store the animation frame ID
 
   const handleSourceChange = (event) => {
     setSelectedSource(event.target.value);
@@ -220,6 +225,73 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
     }
   }, [onTimeUpdate]);
 
+  // Set up the AudioContext and AnalyserNode when a track is selected
+  // Set up the AudioContext and AnalyserNode when a track is selected
+  useEffect(() => {
+    if (audioRef.current && currentTrackIndex !== null) {
+      const audio = audioRef.current;
+
+      // Create AudioContext if it doesn't exist
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      const audioContext = audioContextRef.current;
+
+      // Only create AnalyserNode and connect if not already connected
+      if (!analyserRef.current || !sourceRef.current) {
+        analyserRef.current = audioContext.createAnalyser();
+        analyserRef.current.fftSize = 2048;
+
+        // Call setAnalyserNode to pass the analyserNode up to App
+        setAnalyserNode(analyserRef.current);
+
+        try {
+          sourceRef.current = audioContext.createMediaElementSource(audio);
+          sourceRef.current.connect(analyserRef.current);
+          analyserRef.current.connect(audioContext.destination);
+        } catch (error) {
+          console.error('Error connecting audio element:', error);
+        }
+
+        // Start logging audio data
+        const bufferLength = analyserRef.current.frequencyBinCount;
+        dataArrayRef.current = new Uint8Array(bufferLength);
+
+        const logAudioData = () => {
+          if (analyserRef.current) {
+            analyserRef.current.getByteFrequencyData(dataArrayRef.current);
+            console.log('Audio Data:', dataArrayRef.current);
+            animationIdRef.current = requestAnimationFrame(logAudioData);
+          }
+        };
+
+        logAudioData();
+      }
+
+      // Cleanup function
+      return () => {
+        if (animationIdRef.current) {
+          cancelAnimationFrame(animationIdRef.current);
+        }
+        if (sourceRef.current) {
+          sourceRef.current.disconnect();
+          sourceRef.current = null;
+        }
+        if (analyserRef.current) {
+          analyserRef.current.disconnect();
+          analyserRef.current = null;
+        }
+        if (audioContextRef.current) {
+          audioContextRef.current.close();
+          audioContextRef.current = null;
+        }
+
+        // Also reset the analyserNode in App when cleaning up
+        setAnalyserNode(null);
+      };
+    }
+  }, [currentTrackIndex, setAnalyserNode]);
   return (
     <div className={styles.mediaPlayer}>
       <div className={styles.header}>
@@ -298,7 +370,9 @@ const MediaPlayer = ({ isPlaying, onPlayPause, onMetadataLoaded, onTimeUpdate, s
       </div>
 
       {currentTrackIndex !== null && (
-        <audio ref={audioRef} controls={false} />
+        <>
+          <audio ref={audioRef} controls={false} />
+        </>
       )}
     </div>
   );

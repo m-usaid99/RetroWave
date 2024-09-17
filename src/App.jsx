@@ -30,6 +30,7 @@ const App = () => {
   const [duration, setDuration] = useState(0);
   const [spotifyPlayer, setSpotifyPlayer] = useState(null);
   const [seekTime, setSeekTime] = useState(null);
+  const [analyserNode, setAnalyserNode] = useState(null);
 
   const isMobile = useMediaQuery({ maxWidth: 768 }); // Detect mobile layout
 
@@ -227,11 +228,13 @@ const App = () => {
           onMetadataLoaded={handleMetadataLoaded}
           onTimeUpdate={handleTimeUpdate}
           setSpotifyPlayer={setSpotifyPlayer}
-          seekTime={seekTime} />,
+          seekTime={seekTime}
+          setAnalyserNode={setAnalyserNode}
+        />,
         'MediaPlayer'
       )}
       {renderWindow('about', <p>About content goes here</p>)}
-      {renderWindow('visualizer', <Visualizer width={windows.visualizer.width} height={windows.visualizer.height} />)}
+      {renderWindow('visualizer', <Visualizer width={windows.visualizer.width} height={windows.visualizer.height} analyserNode={analyserNode} />)}
       {renderWindow('settings', <p>Settings content goes here</p>)}
     </div>
   );
